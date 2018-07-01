@@ -7,6 +7,18 @@ import java.util.Collection;
 
 public class PhoneBill extends AbstractPhoneBill {
 
+    private String Customer = null;
+    PhoneCall PhoneCalls = null;
+
+    PhoneBill()
+    {}
+
+    PhoneBill(String customer, PhoneCall phoneCalls)
+    {
+        this.Customer = customer;
+        this.PhoneCalls = phoneCalls;
+    }
+
     @Override
     public String getCustomer() {
         return null;
