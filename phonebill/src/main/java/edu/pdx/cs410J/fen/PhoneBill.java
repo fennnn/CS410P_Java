@@ -3,34 +3,36 @@ package edu.pdx.cs410J.fen;
 import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.AbstractPhoneCall;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-public class PhoneBill extends AbstractPhoneBill {
+public class PhoneBill extends AbstractPhoneBill <PhoneCall>{
+    private Collection<PhoneCall> calls = new ArrayList<>();
+    private String customer = null;
+    private PhoneCall call;
 
-    private String Customer = null;
-    PhoneCall PhoneCalls = null;
-
-    PhoneBill()
-    {}
-
-    PhoneBill(String customer, PhoneCall phoneCalls)
+    PhoneBill(String customer, String caller, String callee, String startDate, String startTime, String endDate, String endTime)
     {
-        this.Customer = customer;
-        this.PhoneCalls = phoneCalls;
+        this.customer = customer;
+        call = new PhoneCall(caller,callee,startDate,startTime,endDate,endTime);
+        calls.add(call);
     }
 
     @Override
     public String getCustomer() {
-        return null;
+
+        return customer;
     }
 
     @Override
-    public void addPhoneCall(AbstractPhoneCall abstractPhoneCall) {
+    public void addPhoneCall(PhoneCall call) {
+        this.calls.add(call);
 
     }
 
     @Override
-    public Collection getPhoneCalls() {
-        return null;
+    public Collection<PhoneCall> getPhoneCalls() {
+
+        return this.calls;
     }
 }

@@ -6,38 +6,56 @@ import java.util.Date;
 
 
 public class PhoneCall extends AbstractPhoneCall {
-  private int phoneNumber = 0;
-  private Date startTime = getStartTime();
-  private Date endTime = getEndTime();
+
+  private String Caller;
+  private String Callee;
+  private String startTime;
+  private String endTime;
+  private String startDate;
+  private String endDate;
 
   PhoneCall()
-  {}
+  {
 
-  PhoneCall(int phoneNumber,Date startTime, Date endTime)
+  }
+
+  PhoneCall(String caller, String callee, String startDate, String startTime, String endDate, String endTime)
   {
     super();
-    this.phoneNumber = phoneNumber;
+
+    this.Caller = caller;
+    this.Callee = callee;
+    this.startDate = startDate;
     this.startTime = startTime;
+    this.endDate = endDate;
     this.endTime = endTime;
   }
 
   @Override
   public String getCaller() {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+    if (this.Callee.isEmpty())
+      return "This method is not implemented yet";
+    else
+      return  Caller;
   }
+
 
   @Override
   public String getCallee() {
-    return "This method is not implemented yet";
+    if (this.Callee.isEmpty())
+      return "This method is not implemented yet";
+    else
+      return Callee;
   }
 
   @Override
   public String getStartTimeString() {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+
+    return startDate+" "+startTime;
   }
 
   @Override
   public String getEndTimeString() {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+      return endDate+" "+endTime;
   }
 }
