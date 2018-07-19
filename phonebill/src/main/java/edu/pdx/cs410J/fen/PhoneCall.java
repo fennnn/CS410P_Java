@@ -56,4 +56,20 @@ public class PhoneCall extends AbstractPhoneCall {
     public String getEndTimeString() {
         return endDate + " " + endTime;
     }
+
+    public String startDate(){
+        return startDate;
+    }
+
+    public String startTime(){
+        return startTime;
+    }
+
+    public String endDate(){
+        return endDate;
+    }
+
+    public String endTime(){
+        return endTime;
+    }
 }
