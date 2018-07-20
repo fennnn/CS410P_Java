@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Project2 {
+public class Project3 {
 
     public static void main(String[] args) throws IOException {
         int indexOfPrint = -1;
@@ -25,15 +25,8 @@ public class Project2 {
         TextDumper dumper;
         TextParser parser;
 
+        System.out.println("3");
         int count = 0;
-
-        if (args.length > 11) {
-            System.out.println("You entered too much command.");
-            System.exit(1);
-        }else if (args.length==0) {
-            System.out.println("You didn't entered any command.");
-            System.exit(1);
-        }
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-README"))
@@ -49,22 +42,15 @@ public class Project2 {
             System.exit(1);
         }
 
-        if (indexOfTextFile == 0){
-            indexOfPath = indexOfTextFile + 1;
-
-            if (indexOfPrint > 0)
+        if (indexOfTextFile >= 0) {
+            if (indexOfPrint > indexOfTextFile)
                 indexOfCustomer = indexOfPrint + 1;
-            else if (indexOfPrint < 0)
-                indexOfCustomer = indexOfPath + 1;
-        }else if (indexOfPrint == 0){
-            if (indexOfTextFile > 0) {
-                indexOfPath = indexOfTextFile + 1;
-                indexOfCustomer = indexOfPath + 1;
-            }
-            else if (indexOfTextFile<0)
-                indexOfCustomer = indexOfPrint+1;
-        }
+            else
+                indexOfCustomer = indexOfTextFile + 2;
 
+            indexOfPath = indexOfTextFile+1;
+        }else
+            indexOfCustomer = indexOfPrint+1;
 
 
         indexOfCaller = indexOfCustomer+1;
@@ -74,45 +60,49 @@ public class Project2 {
         indexOfEndDate = indexOfStartTime+1;
         indexOfEndTime = indexOfEndDate+1;
 
+        if (args.length != 10) {
+            if (args.length < 10) {
+                if (indexOfPrint < 0) {
+                    System.out.println("You didn't enter the [-print] option.\n");
+                }
+                if (indexOfTextFile < 0) {
+                    System.out.println("You didn't enter the [-textFile] option.\n");
+                }
+                if (indexOfPath < 0) {
+                    System.out.println("You didn't enter the [path] option.\n");
+                }
 
-
-
-        if (indexOfPrint < 0) {
-            System.out.println("You didn't enter the [-print] option.\n");
+                if ((indexOfPrint < 0 && indexOfTextFile < 0 && indexOfPath < 0) && args.length <7 )
+                {
+                    System.out.println("You entered too less args.");
+                    System.exit(1);
+                }else if ((indexOfPrint < 0 && indexOfTextFile < 0 && indexOfPath < 0) && args.length >7 )
+                {
+                    System.out.println("Error. You entered extra args.");
+                    System.exit(1);
+                }
+            }else if (args.length > 10) {
+                System.out.println("You entered too much command.");
+            }else if (args.length==0) {
+                System.out.println("You didn't entered any command.");
+            }
         }
-            if (indexOfTextFile < 0) {
-                System.out.println("You didn't enter the [-textFile] option.\n");
-            }
-            if (indexOfPath < 0) {
-                System.out.println("You didn't enter the [path] option.\n");
-            }
-
-            if ((indexOfPrint <= 0 && indexOfTextFile <= 0 && indexOfPath < 0) && args.length < 10 )
-            {
-                System.out.println("You entered too less args.");
-                System.exit(1);
-            }
-            if ((indexOfPrint < 0 && indexOfTextFile >=0  && indexOfPath > 0) && args.length >= 10 )
-            {
-                System.out.println("Error. You entered extra args.");
-                System.exit(1);
-            }
 
 
         if (checkNumber(args[indexOfCaller]) == false || checkNumber(args[indexOfCallee]) == false) {
-            System.out.println("You entered wrong format phone number.\n"  +
-                    "Please follow this format: 1. 10 digits. 2. nnn-nnn-nnnn 3. n is a number from 0-9\n");
+            System.out.print("You entered wrong format phone number.\n"  +
+                    "Please follow this format: 1. 10 digits. 2. nnn-nnn-nnnn 3. n is a number from 0-9\n\n");
             count++;
         }
 
         if (checkDate(args[indexOfStartDate]) == false || checkDate(args[indexOfEndDate]) == false) {
             System.out.println("You entered wrong format date. Please follow this format <mm/dd/yyyy>\n" +
-                    "Any format like those is accept: 1.01/2/1991 2.1/02/1991 3.1/2/1991 4.01/02/1991\n");
+                    "Any format like those is accept: 1.01/2/1991 2.1/02/1991 3.1/2/1991 4.01/02/1991\n\n");
             count++;
         }
 
         if (checkTime(args[indexOfStartTime]) == false || checkTime(args[indexOfEndTime]) == false) {
-            System.out.println("You entered wrong format time. Please follow this format <hh:mm>\n");
+            System.out.println("You entered wrong format time. Please follow this format <hh:mm>\n\n");
             count++;
         }
 
@@ -132,10 +122,6 @@ public class Project2 {
                         System.out.println("Error. The file exists but the file is empty.");
                         System.exit(1);
                     }
-
-                    if (parser.readFile() == null)
-                        System.exit(1);
-
                     bill = parser.readFile();   //File exists and is not empty, parse file
 
                     printFile(bill, parser.getFilename()); //Print file name and file content
@@ -144,7 +130,7 @@ public class Project2 {
                     if (bill.getCustomer().equals(args[indexOfCustomer])) {
                         //Name matches, add new phone call to phone bill
                         PhoneCall call = new PhoneCall(args[indexOfCaller], args[indexOfCallee], args[indexOfStartDate],
-                                    args[indexOfStartTime], args[indexOfEndDate], args[indexOfEndTime]);
+                                args[indexOfStartTime], args[indexOfEndDate], args[indexOfEndTime]);
                         bill.addPhoneCall(call);
 
                         //Dump new phone bill to the file
@@ -153,9 +139,8 @@ public class Project2 {
                         System.out.println("After add new phonecall to the end of exist file: ");
                         printFile(bill, parser.getFilename());
                     } else {
-                        System.out.println("Error. The customer's name ["+args[indexOfCustomer]+
-                                        "] does not match the name [" +bill.getCustomer()+"] in file. " +
-                                        "\nThus, cannot add new phone call.");
+                        System.out.println("Error. The customer's name does not match the name in file. " +
+                                "\nThus, cannot add new phone call.");
                         System.exit(1);
                     }
                 }else {
@@ -164,7 +149,7 @@ public class Project2 {
 
                     //Create new phone bill
                     bill = new PhoneBill(args[indexOfCustomer], args[indexOfCaller], args[indexOfCallee],
-                                args[indexOfStartDate], args[indexOfStartTime], args[indexOfEndDate], args[indexOfEndTime]);
+                            args[indexOfStartDate], args[indexOfStartTime], args[indexOfEndDate], args[indexOfEndTime]);
 
                     dumper.writeFile(bill); //Dump new phone bill to file
 
@@ -213,18 +198,16 @@ public class Project2 {
      */
 
     public static boolean checkDate(String dateString) {
-        //SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
 
         try {
-            Pattern pattern = Pattern.compile("(0?[1-9]|1[012])/(0?[1-9]|[12][0-9]|3[01])/((19|20)\\d\\d)");
-            Matcher matcher = pattern.matcher(dateString);
-
-            if (matcher.matches())
-                return true;
-        } catch (Exception e) {
+            format.setLenient(false);
+            format.parse(dateString);
+        } catch (ParseException e) {
             return false;
         }
-        return false;
+
+        return true;
     }
 
     /**
@@ -288,4 +271,5 @@ public class Project2 {
                 "       (Please enter the information in the above order." );
     }
 }
+
 

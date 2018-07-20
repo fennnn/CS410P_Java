@@ -5,7 +5,7 @@ import edu.pdx.cs410J.AbstractPhoneCall;
 import java.util.Date;
 
 
-public class PhoneCall extends AbstractPhoneCall {
+public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall>{
 
     private String Caller;
     private String Callee;
@@ -71,5 +71,10 @@ public class PhoneCall extends AbstractPhoneCall {
 
     public String endTime(){
         return endTime;
+    }
+
+    @Override
+    public int compareTo(PhoneCall o) {
+        return 0;
     }
 }
