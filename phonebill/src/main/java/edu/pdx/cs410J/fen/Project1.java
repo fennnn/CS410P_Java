@@ -16,7 +16,7 @@ public class Project1 {
 
   public static void main(String[] args) {
 
-    int indexOfPrint = 0;
+    int indexOfPrint = -1;
     int indexOfReadme = -1;
     int indexOfCustomer = 0;
     int indexOfCaller = 0;
@@ -28,7 +28,6 @@ public class Project1 {
 
     int count = 0;
 
-    System.out.println("world");
     for (int i = 0; i < args.length; i++) {
       if (args[i].equals("-README"))
         indexOfReadme = i;
@@ -41,17 +40,28 @@ public class Project1 {
       System.exit(1);
     }
 
-    if (args.length != 8) {
-      if (args.length > 7) {
-        System.out.println("You entered too much command. Please enter correct number of commands.\n");
-        System.exit(1);
-      } else if (args.length == 0) {
-        System.out.print("You didn't enter anything. Please enter correct number of commands.\n");
-        System.exit(1);
-      } else {
-        System.out.print("You entered too less command. Please enter correct number of commands.\n");
-        System.exit(1);
-      }
+    if (args.length > 8) {
+      System.out.println("You entered too much command.");
+      System.exit(1);
+    }else if (args.length==0) {
+      System.out.println("You didn't entered any command.");
+      System.exit(1);
+    }
+
+
+    if (indexOfPrint < 0) {
+      System.out.println("You didn't enter the [-print] option.\n");
+    }
+
+    if (indexOfPrint < 0 && args.length < 7 )
+    {
+      System.out.println("You entered too less args.");
+      System.exit(1);
+    }
+    if (indexOfPrint < 0 && args.length >= 8 )
+    {
+      System.out.println("Error. You entered unknown args.");
+      System.exit(1);
     }
 
     indexOfCustomer = indexOfPrint+1;
@@ -63,29 +73,50 @@ public class Project1 {
     indexOfEndTime = indexOfEndDate+1;
 
 
-    if (checkNumber(args[indexOfCaller]) == false || checkNumber(args[indexOfCallee]) == false) {
-      System.out.print("You entered wrong format phone number.\n"  +
-              "Please follow this format: 1. 10 digits. 2. nnn-nnn-nnnn 3. n is a number from 0-9\n\n");
+    if (checkNumber(args[indexOfCaller]) == false) {
+      System.out.print("You entered wrong format phone number. --[" + args[indexOfCaller] +"]\n"   +
+              "] Please follow this format: 1. 10 digits. 2. nnn-nnn-nnnn 3. n is a number from 0-9\n");
       count++;
     }
 
-    if (checkDate(args[indexOfStartDate]) == false || checkDate(args[indexOfEndDate]) == false) {
-      System.out.println("You entered wrong format date. Please follow this format <mm/dd/yyyy hh:mm.>\n" +
-              "Any format like those is accept: 1.01/2/1991 2.1/02/1991 3.1/2/1991 4.01/02/1991\n\n");
+    if (checkNumber(args[indexOfCallee]) == false) {
+      System.out.print("You entered wrong format phone number. --[" + args[indexOfCallee] +"]\n"   +
+              "] Please follow this format: 1. 10 digits. 2. nnn-nnn-nnnn 3. n is a number from 0-9\n");
       count++;
     }
 
-    if (checkTime(args[indexOfStartTime]) == false || checkTime(args[indexOfEndTime]) == false) {
-      System.out.println("You entered wrong format time. Please follow this format <hh:mm>\n\n");
+    if (checkDate(args[indexOfStartDate]) == false) {
+      System.out.println("You entered wrong format date.  --["+ args[indexOfStartDate] +
+              "] Please follow this format <mm/dd/yyyy>\n" +
+              "Any format like those is accept: 1.01/2/1991 2.1/02/1991 3.1/2/1991 4.01/02/1991\n");
+      count++;
+    }
+    if (checkDate(args[indexOfEndDate]) == false) {
+      System.out.println("You entered wrong format date.  --["+ args[indexOfEndDate] +
+              "] Please follow this format <mm/dd/yyyy>\n" +
+              "Any format like those is accept: 1.01/2/1991 2.1/02/1991 3.1/2/1991 4.01/02/1991\n");
+      count++;
+    }
+
+    if (checkTime(args[indexOfStartTime]) == false ) {
+      System.out.println("You entered wrong format time. --[" + args[indexOfStartTime] +
+              "] Please follow this format <hh:mm> and all should be integer number\n");
+      count++;
+    }
+
+    if (checkTime(args[indexOfEndTime]) == false ) {
+      System.out.println("You entered wrong format time. --[" + args[indexOfEndTime] +
+              "] Please follow this format <hh:mm> and all should be integer number\n");
       count++;
     }
 
     if (count == 0) {
       //PhoneCall call = new PhoneCall();  // Refer to one of Dave's classes so that we can be sure it is on the classpath
       PhoneBill bill = new PhoneBill(args[indexOfCustomer], args[indexOfCaller], args[indexOfCallee],
-              args[indexOfStartDate], args[indexOfStartTime], args[indexOfEndDate], args[indexOfEndTime]);
+              args[indexOfStartDate], args[indexOfStartTime],args[indexOfEndDate], args[indexOfEndTime]);
 
-      print(bill);
+      if (indexOfPrint >= 0)
+        print(bill);
     }else
       System.exit(1);
   }
@@ -115,16 +146,16 @@ public class Project1 {
    */
 
   public static boolean checkDate(String dateString) {
-    SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-
     try {
-      format.setLenient(false);
-      format.parse(dateString);
-    } catch (ParseException e) {
+      Pattern pattern = Pattern.compile("(0?[1-9]|1[012])/(0?[1-9]|[12][0-9]|3[01])/((19|20)\\d\\d)");
+      Matcher matcher = pattern.matcher(dateString);
+
+      if (matcher.matches())
+        return true;
+    } catch (Exception e) {
       return false;
     }
-
-    return true;
+    return false;
   }
 
   /**
@@ -133,18 +164,18 @@ public class Project1 {
    * @return
    */
   public static boolean checkNumber(String num) {
-    boolean result = false;
-
     try {
-      Pattern pattern = Pattern.compile("^\\(?(\\d{3})\\)?[-](\\d{3})[-](\\d{4})$");
+      Pattern pattern = Pattern.compile("(\\d{3})[-](\\d{3})[-](\\d{4})$");
       Matcher matcher = pattern.matcher(num);
 
-      result = matcher.matches();
+      if( matcher.matches()){
+        return true;
+      }
     }catch (Exception e) {
-      result = false;
+      return false;
     }
 
-    return result;
+    return false;
   }
 
   /**
