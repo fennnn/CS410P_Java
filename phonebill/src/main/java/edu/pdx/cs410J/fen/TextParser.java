@@ -4,8 +4,11 @@ import edu.pdx.cs410J.ParserException;
 import edu.pdx.cs410J.PhoneBillParser;
 
 import java.io.*;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,7 +54,7 @@ public class TextParser implements PhoneBillParser <PhoneBill> {
         PhoneBill bill = new PhoneBill();
 
 
-        String customer, caller, callee, startTime, endTime, startDate, endDate;
+        String customer, caller, callee, startTime, startM, endTime, startDate, endDate, endM;
         try {
             bReader = new BufferedReader(new FileReader(path));
 
@@ -65,7 +68,7 @@ public class TextParser implements PhoneBillParser <PhoneBill> {
 
                 addInfo = line.split(",");
 
-                if (addInfo.length != 7){
+                if (addInfo.length != 9){
                     System.out.println("Error, the phone call information in file is malformatted.");
                     System.exit(1);
                 }
@@ -75,8 +78,10 @@ public class TextParser implements PhoneBillParser <PhoneBill> {
                 callee = addInfo[2];
                 startDate = addInfo[3];
                 startTime = addInfo[4];
-                endDate = addInfo[5];
-                endTime = addInfo[6];
+                startM = addInfo[5];
+                endDate = addInfo[6];
+                endTime = addInfo[7];
+                endM = addInfo[8];
                 int count = 0;
 
                 if (checkNumber(caller) == false) {
@@ -111,8 +116,12 @@ public class TextParser implements PhoneBillParser <PhoneBill> {
                     count++;
                 }
 
+                if (checkValid(startDate,startTime,startM,endDate,endTime,endM)==false){
+                    System.out.println("Reading the start time doesn't before the end time.");
+                    count++;
+                }
                 if (count == 0)
-                    bill.add(customer, caller,callee,startDate,startTime,endDate,endTime);
+                    bill.add(customer, caller,callee,startDate,startTime,startM,endDate,endTime,endM);
                 else {
                     System.out.println("Format error from reading in file.");
                     return null;
@@ -126,6 +135,35 @@ public class TextParser implements PhoneBillParser <PhoneBill> {
     }
 
 
+    /**
+     * This 'checkValid' method is used to check if the start time before the end time
+     * @param sDate
+     * @param sTime
+     * @param sM
+     * @param eDate
+     * @param eTime
+     * @param eM
+     * @return
+     */
+    public boolean checkValid(String sDate, String sTime, String sM, String eDate, String eTime, String eM){
+        SimpleDateFormat pretty =new SimpleDateFormat("MM/dd/yyyy hh:mm a",Locale.US);
+
+        try {
+            Date start = pretty.parse(sDate + " " + sTime+ " " + sM);
+            Date end = pretty.parse(eDate + " " + eTime+ " " + eM);
+
+            DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT,Locale.US).format(start);
+            DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT,Locale.US).format(end);
+
+            if (start.getTime()>end.getTime())
+                return false;
+            else
+                return true;
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            return false;
+        }
+    }
     /**
      * This 'checkFile' method is used to check file exists or not
      * @return
@@ -168,7 +206,7 @@ public class TextParser implements PhoneBillParser <PhoneBill> {
      * @return
      */
     public boolean checkTime(String timeString) {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("hh:mm");
 
         try
         {
@@ -187,8 +225,6 @@ public class TextParser implements PhoneBillParser <PhoneBill> {
      */
 
     public boolean checkDate(String dateString) {
-        //SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-
         try {
             Pattern pattern = Pattern.compile("(0?[1-9]|1[012])/(0?[1-9]|[12][0-9]|3[01])/((19|20)\\d\\d)");
             Matcher matcher = pattern.matcher(dateString);

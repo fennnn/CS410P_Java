@@ -14,10 +14,10 @@ public class PhoneBill extends AbstractPhoneBill <PhoneCall>{
 
     }
 
-    PhoneBill(String customer, String caller, String callee, String startDate, String startTime, String endDate, String endTime)
+    PhoneBill(String customer, String caller, String callee, String startDate, String startTime, String sM, String endDate, String endTime,String eM)
     {
         this.customer = customer;
-        call = new PhoneCall(caller,callee,startDate,startTime,endDate,endTime);
+        call = new PhoneCall(caller,callee,startDate,startTime,sM,endDate,endTime,eM);
         calls.add(call);
     }
 
@@ -46,12 +46,14 @@ public class PhoneBill extends AbstractPhoneBill <PhoneCall>{
      * @param callee
      * @param startDate
      * @param startTime
+     * @param sM
      * @param endDate
      * @param endTime
+     * @param eM
      */
-    public void add(String customer, String caller, String callee, String startDate, String startTime, String endDate, String endTime){
+    public void add(String customer, String caller, String callee, String startDate, String startTime, String sM,String endDate, String endTime, String eM){
         this.customer = customer;
-        call = new PhoneCall(caller,callee,startDate,startTime,endDate,endTime);
+        call = new PhoneCall(caller,callee,startDate,startTime,sM,endDate,endTime,eM);
         calls.add(call);
     }
 }

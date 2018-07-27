@@ -2,7 +2,6 @@ package edu.pdx.cs410J.fen;
 
 import edu.pdx.cs410J.PhoneBillDumper;
 
-
 import java.io.*;
 import java.io.IOException;
 import java.io.BufferedWriter;
@@ -44,7 +43,8 @@ public class TextDumper implements PhoneBillDumper<PhoneBill>{
             PhoneCall call = Call[calls.size()-1];
             sWriter.append("\n");
             sWriter.append(phoneBill.getCustomer()+","+call.getCaller() + "," + call.getCallee() + "," +
-                call.startDate() + "," + call.startTime() + "," + call.endDate() + "," + call.endTime());
+                call.startDate() + "," + call.startTime() + "," + call.sM() +","+ call.endDate() + "," +
+                    call.endTime() + "," + call.eM());
 
 
             bWriter = new BufferedWriter(new FileWriter(path,true));
@@ -71,7 +71,8 @@ public class TextDumper implements PhoneBillDumper<PhoneBill>{
                 call = calls.iterator().next();
 
                 bWriter.write(phoneBill.getCustomer() + "," + call.getCaller() + "," + call.getCallee() + "," +
-                        call.startDate() + "," + call.startTime() + "," + call.endDate() + "," + call.endTime());
+                        call.startDate() + "," + call.startTime() + "," + call.sM()+ ","+
+                        call.endDate() + "," + call.endTime() + "," + call.eM());
             }
             bWriter.close();
         }catch (IOException error){
